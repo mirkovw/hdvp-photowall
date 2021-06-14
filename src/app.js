@@ -45,12 +45,15 @@ const smtp_server = new SMTPServer({
                 console.log('From: ' + parsed.from.text);
                 console.log('Subject: ' + parsed.subject);
 
-                if (parsed['attachments']) { //check for attachments
+                if (parsed['attachments'].length > 0) { //check for attachments
                     console.log('Attachments: ' + parsed['attachments'].length);
 
-                    for (let attachment of parsed['attachments']) {
-                        try { // write attachment
+                    const attachment = parsed['attachments'][0]; // we're only doing the first attachment
 
+                    try { // write attachment
+                        console.log('Ok, so we got an attachment.');
+
+                        if (attachment.contentType === 'image/jpeg' || attachment.contentType === 'image/png' || attachment.contentType === 'image/webp') {
                             let imagePath = await writeAttachment(attachment);
                             const imageValid = await checkImage(imagePath);
 
@@ -59,18 +62,23 @@ const smtp_server = new SMTPServer({
                                 await updateDataJson();
 
                                 console.log("Attachment has been resized, checked, moved and added to JSON.");
-                                response = 'Your image has been added to the photowall and will be visible shortly. Thank you!';
+                                response = 'Your image has been added to the photowall and will be visible shortly. Thank you!<br>The images will be deleted after the event concludes.';
                             }
 
                             else {
                                 console.log('Image was flagged by Sightengine');
                                 response = 'The image you sent through was deemed inappropriate by our software. Please select another image and try again.';
                             }
-                        } catch (err) {
-                            console.log('error writing attachment');
-                            response = 'We were unable to process your image. Please try again with a different image.';
-                            console.log(err);
+
+                        } else {
+                            console.log("Wrong attachment type.");
+                            response = 'Please only send JPG/PNG/WEBP images to this address.';
                         }
+
+                    } catch (err) {
+                        console.log('Error writing attachment');
+                        response = 'We were unable to process your image. Please try again with a different image.';
+                        console.log(err);
                     }
                 }
             }
@@ -160,6 +168,19 @@ const updateDataJson = async () => {
 
 
 const replyTo = async (parsed, response) => {
+    if (parsed.from.value.address === 'photos@hdvp.nl') {
+        console.log('message was sent from photos@hdvp.nl which will cause a loop. Aborting..');
+        return;
+    }
+
+    // console.log(parsed)
+    console.log('this email was:')
+    console.log('from: ');
+    console.log(parsed.from.value);
+    console.log('to: ');
+    console.log(parsed.to.value);
+    console.log('reply-to: ' + parsed['reply-to']);
+    console.log('message id: ' + parsed.messageId);
 
     const email = parsed.from.value[0].address;
 
@@ -174,11 +195,16 @@ const replyTo = async (parsed, response) => {
     console.log('Host = ' + host);
 
     const from = parsed.to.text;
+    // const from = 'HDVP Photowall <'+ parsed.to.text +'>'
     const to = parsed.from.text;
     const subject = 'RE: ' + parsed.subject;
     const messageHtml = 'Thanks for your message!\n\n' + parsed.html;
     const inReplyTo = parsed.messageId;
     const references = parsed.messageId;
+
+
+
+
 
     const mailOptions = {
         from: from,
@@ -200,6 +226,9 @@ const replyTo = async (parsed, response) => {
         }
     });
 
+
+    // return;
+
     await transporter.sendMail(mailOptions, function(error, info){
         if (error) {
             console.log(error);
@@ -213,8 +242,6 @@ const replyTo = async (parsed, response) => {
 ( async () => {
 
     web_server.use(express.static(publicFolder));
-
-
     await updateDataJson();
 
     smtp_server.listen(smtp_port, '192.168.1.3', ()=> {
