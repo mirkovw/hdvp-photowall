@@ -156,11 +156,7 @@ const updateDataJson = async () => {
     await fs.writeFile(jsonDataPath, JSON.stringify(jsonData, null, 2));
 }
 
-( async () => {
-    // const newFileName = await getNewFilename();
-    // console.log(newFileName)
-    await updateDataJson();
-})();
+
 
 
 const replyTo = async (parsed, response) => {
@@ -213,17 +209,20 @@ const replyTo = async (parsed, response) => {
     });
 }
 
-web_server.use(express.static(publicFolder));
 
-// web_server.get('/', (req, res)=>{
-//     console.log(req)
-//     res.sendFile(path.join(__dirname, '../public/'));
-// })
+( async () => {
 
-smtp_server.listen(smtp_port, '192.168.1.3', ()=> {
-    console.log('SMTP server listening on ' + smtp_port);
-})
+    web_server.use(express.static(publicFolder));
 
-web_server.listen(web_port, ()=> {
-    console.log('Web server listening running on ' + web_port);
-})
+
+    await updateDataJson();
+
+    smtp_server.listen(smtp_port, '192.168.1.3', ()=> {
+        console.log('SMTP server listening on ' + smtp_port);
+    })
+
+    web_server.listen(web_port, ()=> {
+        console.log('Web server listening running on ' + web_port);
+    })
+
+})();
