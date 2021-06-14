@@ -1,0 +1,18 @@
+{
+  "server": {
+    "smtp_port": 25,
+    "web_port": 80,
+    "publicFolder": "../public/"
+  },
+  "dkim": {
+    "domainName": "",
+    "keySelector": "",
+    "privateKey": ""
+  },
+  "sightEngine": {
+    "models": "nudity,wad,offensive,scam,text-content,gore",
+    "api_user": "",
+    "api_secret": ""
+  }
+
+}

@@ -1,0 +1,118 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+#root {
+    position: absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: black;
+}
+
+.hdvp-logo {
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 75%;
+    height: 75%;
+
+    opacity: 0.1;
+}
+
+.slider {
+    /*width: 50%;*/
+    /*margin: 100px auto;*/
+}
+
+.slick-slide {
+    /*margin: 0px 20px;*/
+}
+
+.slick-slide img {
+    width: 100%;
+
+}
+
+.slick-prev:before,
+.slick-next:before {
+    color: black;
+}
+
+
+.slick-slide {
+    /*transition: all ease-in-out 1s;*/
+    /*opacity: .2;*/
+}
+
+.slick-slide div:first-child div:first-child{
+    display: block!important;
+}
+
+.slick-active {
+    /*opacity: .5;*/
+}
+
+.slick-current {
+    opacity: 1;
+}
+
+.vertical-center-1 {
+
+    /*height: 100%!important;*/
+    /*display: flex!important;*/
+    width: 33%;
+}
+.vertical-center-2 {
+
+    /*height: 100%!important;*/
+    /*display: flex!important;*/
+    left:33%;
+    width: 34%;
+}
+
+.vertical-center-3 {
+
+    /*height: 100%!important;*/
+    /*display: flex!important;*/
+    left:67%;
+    width: 33%;
+}
+
+.slick-list {
+    /*height: 1080px!important;*/
+    overflow: visible!important;
+}
+
+.slick-slider {
+    position: absolute!important;
+}
+
+#testBtn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 150px;
+    height: 20px;
+    text-align: center;
+
+    background-color: #000;
+    color: #fff;
+
+    cursor: pointer;
+
+    font-family: sans-serif;
+
+}
