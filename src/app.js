@@ -168,8 +168,8 @@ const updateDataJson = async () => {
 
 
 const replyTo = async (parsed, response) => {
-    if (parsed.from.value.address === 'photos@hdvp.nl') {
-        console.log('message was sent from photos@hdvp.nl which will cause a loop. Aborting..');
+    if (parsed.from.value.address === 'photos@hdvp.nl' || parsed.from.value.address === 'foto@hdvp.nl') {
+        console.log('message was sent from photos/foto@hdvp.nl which will cause a loop. Aborting..');
         return;
     }
 
@@ -244,12 +244,11 @@ const replyTo = async (parsed, response) => {
     web_server.use(express.static(publicFolder));
     await updateDataJson();
 
-    smtp_server.listen(smtp_port, '192.168.1.3', ()=> {
-        console.log('SMTP server listening on ' + smtp_port);
-    })
+    smtp_server.listen(smtp_port);
+    console.log('SMTP server listening on ' + smtp_port);
 
     web_server.listen(web_port, ()=> {
-        console.log('Web server listening running on ' + web_port);
+        console.log('Web server listening on ' + web_port);
     })
 
 })();

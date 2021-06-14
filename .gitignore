@@ -105,3 +105,6 @@ dist
 
 .idea
 default.json
+data.json
+photowall/
+photowall_temp/
