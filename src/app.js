@@ -33,8 +33,8 @@ const watcher = chokidar.watch(imgFolder, {
 
 const smtp_server = new SMTPServer({
     onConnect(session, callback) {
-        console.log("Incoming connection")
-        console.log(session)
+        // console.log("Incoming connection")
+        // console.log(session)
 
         return callback();
     },
@@ -46,25 +46,27 @@ const smtp_server = new SMTPServer({
 
             if (err) console.log("Error:" , err)
 
-            console.log('Data received');
+            console.log('------ DATA RECEIVED ----------');
 
             try { // try parsing data first
                 const date = new Date();
+                console.log('EMAIL DATA -----------------')
                 console.log('Current time: ' + date);
                 console.log('Sent time: ' + parsed.date);
                 console.log('To: ' + parsed.to.text);
                 console.log('From: ' + parsed.from.text);
                 console.log('Subject: ' + parsed.subject);
+                console.log('----------------------------')
 
                 if (parsed['attachments'].length > 0) { //check for attachments
-                    console.log('Attachments: ' + parsed['attachments'].length);
+                    // console.log('Attachments: ' + parsed['attachments'].length);
 
                     const attachment = parsed['attachments'][0]; // we're only doing the first attachment
 
                     try { // write attachment
-                        console.log('Ok, so we got an attachment.');
 
                         if (attachment.contentType === 'image/jpeg' || attachment.contentType === 'image/png' || attachment.contentType === 'image/webp') {
+                            console.log('Email contains image attachment');
                             let imagePath = await writeAttachment(attachment);
                             const imageValid = await checkImage(imagePath);
 
@@ -72,7 +74,7 @@ const smtp_server = new SMTPServer({
                                 imagePath = await moveImage(imagePath, imgFolder);
                                 await updateDataJson();
 
-                                console.log("Attachment has been resized, checked, moved and added to JSON.");
+                                console.log(path.basename(imagePath) + " : Resized, checked, moved and added to JSON");
                                 response = 'Your image has been added to the photowall and will be visible shortly. Thank you!<br>The images will be deleted after the event concludes.';
                             }
 
@@ -105,7 +107,7 @@ const smtp_server = new SMTPServer({
         })
 
         stream.on("end", function() {
-            console.log('stream ended?')
+
         })
 
     },
@@ -113,30 +115,31 @@ const smtp_server = new SMTPServer({
 });
 
 const getNewFilename = async () => {
-    console.log('Getting new filename')
+    // console.log('Getting new filename')
     const d = new Date();
     const timeStamp = d.getTime();
     const newFilename = 'img_' + timeStamp +  '_id1_id2.webp';
     const newImagePath = path.join(tempImgFolder, newFilename)
 
-    console.log('Ok new filename is ' + path.basename(newImagePath));
-    console.log('And the path is ' + newImagePath)
+    // console.log('Ok new filename is ' + path.basename(newImagePath));
+    // console.log('And the path is ' + newImagePath)
     return newImagePath;
 }
 
 const writeAttachment = async (attachment) => {
-    console.log('Ok got an attachment: ' + attachment)
+    // console.log('Ok got an attachment: ' + attachment)
     const imgFilePath = await getNewFilename();
-    console.log('Writing to temp folder...')
+    // console.log('Writing to temp folder...')
     const image = await sharp(attachment.content).resize(800).toFile(imgFilePath);
-    console.log('Done. image details:');
-    console.log(image);
+    // console.log('Done. image details:');
+    // console.log(image);
+    console.log(path.basename(imgFilePath) + ' : Created')
     return imgFilePath;
 }
 
 const checkImage = async (imagePath) => {
-    console.log('checking ' + imagePath + ' , seeing if image is SFW');
-    console.log('Is SFW, good to go!')
+    // console.log('checking ' + imagePath + ' , seeing if image is SFW');
+    // console.log('Is SFW, good to go!')
 
     const data = new FormData();
     data.append('media', createReadStream(imagePath));
@@ -144,11 +147,13 @@ const checkImage = async (imagePath) => {
     data.append('api_user', config.get('sightEngine.api_user'));
     data.append('api_secret', config.get('sightEngine.api_secret'));
 
-    console.log('sending to sightengine...')
+    console.log(path.basename(imagePath) + ' : Sending to SightEngine API...')
+
     try {
         const result = await axios.post('https://api.sightengine.com/1.0/check.json', data, {headers: data.getHeaders()})
-        console.log(result.data);
+        // console.log(result.data);
         if (result.data.nudity.raw < 0.1 && result.data.weapon < 0.1 && result.data.drugs < 0.1 && result.data.offensive.prob < 0.1) {
+            console.log(path.basename(imagePath) + ' : Received OK from SightEngine')
             return true;
         }
         else {
@@ -162,9 +167,11 @@ const checkImage = async (imagePath) => {
 const moveImage = async(imagePath, imgFolder) => {
     const oldPath = imagePath;
     const newPath = path.join(imgFolder, path.basename(oldPath));
-    console.log('moving ' + oldPath);
-    console.log('to ' + newPath);
+    //console.log('moving ' + oldPath);
+    //console.log('to ' + newPath);
+    console.log(path.basename(oldPath) + ' : Moving to public img folder')
     await fs.rename(oldPath, newPath);
+    return newPath;
 }
 
 const updateDataJson = async () => {
@@ -191,13 +198,13 @@ const replyTo = async (parsed, response) => {
         return;
     }
 
-    console.log('this email was:')
-    console.log('from: ');
-    console.log(parsed.from.value);
-    console.log('to: ');
-    console.log(parsed.to.value);
-    console.log('reply-to: ' + parsed['reply-to']);
-    console.log('message id: ' + parsed.messageId);
+    // console.log('this email was:')
+    // console.log('from: ');
+    // console.log(parsed.from.value);
+    // console.log('to: ');
+    // console.log(parsed.to.value);
+    // console.log('reply-to: ' + parsed['reply-to']);
+    // console.log('message id: ' + parsed.messageId);
 
     const mailOptions = {
         from: config.get('mail.from'),
@@ -220,7 +227,7 @@ const replyTo = async (parsed, response) => {
         if (error) {
             console.log(error);
         } else {
-            console.log('Email sent: ' + info.response);
+            console.log('Reply sent: ' + info.response);
         }
     });
 }
