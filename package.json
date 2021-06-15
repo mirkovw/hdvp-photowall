@@ -8,13 +8,19 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "nodemonConfig": {
-    "ignore": ["public/data/data.json", "public/img/photowall", "public/img/photowall_temp"]
+    "ignore": [
+      "public/data/data.json",
+      "public/img/photowall",
+      "public/img/photowall_temp"
+    ]
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.18.0",
     "axios": "^0.21.1",
+    "chokidar": "^3.5.1",
     "config": "^3.3.6",
     "express": "^4.17.1",
     "forever": "^4.0.1",

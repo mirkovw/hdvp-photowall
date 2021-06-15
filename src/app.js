@@ -10,15 +10,26 @@ const path = require('path');
 const axios = require('axios');
 const FormData = require('form-data');
 const config = require('config');
+const chokidar = require('chokidar');
+const aws = require("@aws-sdk/client-ses");
 
-const smtp_port = config.get('server.smtp_port');
-const web_port = config.get('server.web_port');
+const smtp_listen_port = config.get('mail.port');
+const web_port = config.get('web.port');
 const web_server = express();
 
 const publicFolder = path.join(__dirname, "../public/")
 const jsonDataPath = path.join(__dirname, "../public/data/data.json")
 const tempImgFolder = path.join(__dirname, "../public/img/photowall_temp/")
 const imgFolder = path.join(__dirname, "../public/img/photowall/")
+
+const watcher = chokidar.watch(imgFolder, {
+    ignored: /^\./,
+    persistent: true,
+    ignoreInitial: true
+});
+//const watcher = chokidar.watch(imgFolder);
+
+
 
 const smtp_server = new SMTPServer({
     onConnect(session, callback) {
@@ -159,21 +170,27 @@ const moveImage = async(imagePath, imgFolder) => {
 const updateDataJson = async () => {
     console.log('Updating data JSON file')
     const imgDirContents = await fs.readdir(imgFolder);
+
+    const imgArray = imgDirContents.filter(file => {
+        if (file != '.gitignore') {
+            return file;
+        }
+    })
+
     let jsonData = {};
-    jsonData.images = imgDirContents;
+    jsonData.images = imgArray;
     await fs.writeFile(jsonDataPath, JSON.stringify(jsonData, null, 2));
 }
 
 
-
-
 const replyTo = async (parsed, response) => {
-    if (parsed.from.value.address === 'photos@hdvp.nl' || parsed.from.value.address === 'foto@hdvp.nl') {
+    const email = parsed.from.value[0].address;
+
+    if (email === 'photos@hdvp.nl' || email === 'foto@hdvp.nl') {
         console.log('message was sent from photos/foto@hdvp.nl which will cause a loop. Aborting..');
         return;
     }
 
-    // console.log(parsed)
     console.log('this email was:')
     console.log('from: ');
     console.log(parsed.from.value);
@@ -182,52 +199,22 @@ const replyTo = async (parsed, response) => {
     console.log('reply-to: ' + parsed['reply-to']);
     console.log('message id: ' + parsed.messageId);
 
-    const email = parsed.from.value[0].address;
-
-    let host = '';
-    try {
-        const response = await legit(email);
-        host = response.mxArray[0].exchange;
-    } catch (e) {
-        console.log(e);
-    }
-
-    console.log('Host = ' + host);
-
-    const from = parsed.to.text;
-    // const from = 'HDVP Photowall <'+ parsed.to.text +'>'
-    const to = parsed.from.text;
-    const subject = 'RE: ' + parsed.subject;
-    const messageHtml = 'Thanks for your message!\n\n' + parsed.html;
-    const inReplyTo = parsed.messageId;
-    const references = parsed.messageId;
-
-
-
-
-
     const mailOptions = {
-        from: from,
-        to: to,
-        subject: subject,
+        from: config.get('mail.from'),
+        to: parsed.from.text,
+        subject: 'RE: ' + parsed.subject,
         text: response,
         html: response,
-        inReplyTo: inReplyTo,
-        references: references
+        inReplyTo: parsed.messageId,
+        references: parsed.messageId
     };
 
     const transporter = await nodemailer.createTransport({
-        host: host,
-        port: 25,
-        dkim: {
-            domainName: config.get('dkim.domainName'),
-            keySelector: config.get('dkim.keySelector'),
-            privateKey: config.get('dkim.privateKey')
-        }
+        host: config.get('mail.smtp.host'),
+        port: config.get('mail.smtp.port'),
+        auth: config.get('mail.smtp.auth'),
+        dkim: config.get('mail.dkim')
     });
-
-
-    // return;
 
     await transporter.sendMail(mailOptions, function(error, info){
         if (error) {
@@ -240,15 +227,19 @@ const replyTo = async (parsed, response) => {
 
 
 ( async () => {
-
     web_server.use(express.static(publicFolder));
     await updateDataJson();
 
-    smtp_server.listen(smtp_port);
-    console.log('SMTP server listening on ' + smtp_port);
+    smtp_server.listen(smtp_listen_port);
+    console.log('SMTP server listening on ' + smtp_listen_port);
 
     web_server.listen(web_port, ()=> {
         console.log('Web server listening on ' + web_port);
+    })
+
+    watcher.on('unlink', async function(path) {
+        console.log('File', path, 'has been removed');
+        await updateDataJson();
     })
 
 })();

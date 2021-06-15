@@ -12,3 +12,9 @@ node_modules/
 .idea
 default.json
 public/data/data.json
+
+src/send_hdvp.js
+
+src/sendMail.js
+
+src/sendmail_myrcat.js

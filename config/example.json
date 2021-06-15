@@ -1,18 +1,24 @@
 {
-  "server": {
-    "smtp_port": 25,
-    "web_port": 80,
+  "web": {
+    "port": 2000,
     "publicFolder": "../public/"
   },
-  "dkim": {
-    "domainName": "",
-    "keySelector": "",
-    "privateKey": ""
+  "mail": {
+    "smtp": {
+      "host": "",
+      "port": 587,
+      "user": "",
+      "pass": ""
+    },
+    "dkim": {
+      "domainName": "",
+      "keySelector": "",
+      "privateKey": "-----BEGIN RSA PRIVATE KEY-----\\n' +\n            'MIIEpAIBAAKCAQEA66eo2Yoz2QHd1Q9RgwCniEJ+omERxv5+KVBVYPsqsaCHOZQX\\n' +\n            'xMWUvPpKASdVOl7T2dcd492gYvORqULH9Ze0M1u/vY3IM+PHR1KVyEy8Dbnspkxi\\n' +\n            'w7iWmlSOwfLksTmPfA0JOfVAiOh1yJpMoTIr8q45euQ+Z3UJpHXhKqp+4CYVzotm\\n' +\n            'igX5GeBlnGatrILjfuqIGWgAPnGC2F+5NO41jUYNmuLjzrq8Cg/QIZrjyAzi3S/J\\n' +\n            '90/zWxUJlfudeCPq3kKzpTbFFCX2AQ/dPgRWaglh2PA/di/D/EQgwYmchz8tfiUz\\n' +\n            'U1zL8edAJCZhBOSzIhxkthxL3yUjboqLeRxjfwIDAQABAoIBAC2m1TcPZuvrSKY1\\n' +\n            'yXyva8Uh3JZoZ6E9PAOU5HVdMvAmQQwOfGxKOn5BnoSKsiAUrsXMvqWeEawZs2Yu\\n' +\n            '4b3aHba1V3fJN7eVsM1IWmvrMaMXGZk9wwRXhhVvvBgmjdcnZ3yIqfjoYhAjuG2c\\n' +\n            'NqwjpA/nYItGHDC+o5eQnoY9cUbKutIy5ld86HzTAvgH43uShqKwe5N1PytdlsI/\\n' +\n            'mOO3ZWR0C7svvskS++3S4/gFLX2xhG49aUXymcKNCnT0QKKjTWS9SaQ4r+ryFzih\\n' +\n            'V+lhO3ppM1hmFNonKtBYZdX/rmLmqXxJrLZuoShcUJHLA5cxyA8azpTJOwozmTaG\\n' +\n            '3zvBeAECgYEA+RvNfZMO1t5HBfEgh+vSBQDgETWf6vJkJ8N53o/b4Dt6P7s9q76k\\n' +\n            'LcRUMCFCnzPytGImRDh4SKgKbC4RwJGjBrQG6m2JDWOk8Dp9463IRrVI3+W6v+SE\\n' +\n            'O5DzMuCV6LjBdHYST1+kWe+eWVKowbib/qkJyU1R2KGK1yc83+qy6P8CgYEA8iyT\\n' +\n            'zAq9tSbhe9ZJTYbSDflMzE4Rln6blsUVDgk9YYBiyYig/DM32J7M2V6G79UhZdCn\\n' +\n            '8HckdOEKB6teDh9d4t+nabDv7sjSR4kZdwIYzDRqabif24Lo5GBIQU8EEVCRJyWw\\n' +\n            '9GdQFevAk0wtBQpcZmF2qpSrzf1EaW7SoqGYBYECgYEA4mqZ0KxMTZIEverXZZM6\\n' +\n            '9d9AyYOTEao0zEuIxni9IccNq0WVnTeO5CZRWtmwQyGlVLztCQ7GjUtnBcKt0fjN\\n' +\n            'U7dnncXnTuslrE+NwtZedZ4qWY7luaqLYdSyp6inuLnM4/y5UbmdmT0JESjnSARy\\n' +\n            'jPm5cmU7ognaNwpr8x3QdaMCgYEAjHHLuN5VzJPi2oWYd0yDzzTQFAAGdSexpctf\\n' +\n            '/YbgQQZKxCPncLtnXMojdMA8MySAPOK4Ml12GA5WWcJJRplsQmGAXmwNiYaPZIse\\n' +\n            '6ISfyvVu7Sb0FkKiO6eW38EqU7xMoc5bBDJSIJRbV1ErHqw2j+1f+2dDB7Akl5x8\\n' +\n            'rXJXjoECgYAbWDZoSH/De6o2Wgr7ieiUd0xmB8ASsdJdgKygGRuoGV/nYGvBw1fw\\n' +\n            'II3bS+Xxibh056n428r6qcB5Xwfumr/HN9+NBTC9/FTy4/gdAOFhgOZM5vrLEs7t\\n' +\n            'w6Cpm085w3KQNK4NMQIq6DFaIi5kXJ3kTJvw56449/RhRunqJuhL8Q==\\n' +\n            '-----END RSA PRIVATE KEY-----"
+    }
   },
   "sightEngine": {
     "models": "nudity,wad,offensive,scam,text-content,gore",
     "api_user": "",
     "api_secret": ""
   }
-
 }
