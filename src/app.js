@@ -206,6 +206,22 @@ const replyTo = async (parsed, response) => {
     // console.log('reply-to: ' + parsed['reply-to']);
     // console.log('message id: ' + parsed.messageId);
 
+    // const transporter = await nodemailer.createTransport({
+    //     host: config.get('mail.smtp.host'),
+    //     port: config.get('mail.smtp.port'),
+    //     auth: config.get('mail.smtp.auth'),
+    //     dkim: config.get('mail.dkim')
+    // });
+
+    // configure AWS SDK
+    process.env.AWS_ACCESS_KEY_ID = config.get('aws.access_key');
+    process.env.AWS_SECRET_ACCESS_KEY = config.get('aws.secret');
+    const ses = new aws.SES(config.get('aws.ses'));
+
+    const transporter = nodemailer.createTransport({
+        SES: { ses, aws }
+    });
+
     const mailOptions = {
         from: config.get('mail.from'),
         to: parsed.from.text,
@@ -215,13 +231,6 @@ const replyTo = async (parsed, response) => {
         inReplyTo: parsed.messageId,
         references: parsed.messageId
     };
-
-    const transporter = await nodemailer.createTransport({
-        host: config.get('mail.smtp.host'),
-        port: config.get('mail.smtp.port'),
-        auth: config.get('mail.smtp.auth'),
-        dkim: config.get('mail.dkim')
-    });
 
     await transporter.sendMail(mailOptions, function(error, info){
         if (error) {
