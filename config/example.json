@@ -28,9 +28,20 @@
   "aws": {
     "access_key": "",
     "secret": "",
+    "region": "us-east-1",
     "ses": {
-      "apiVersion": "latest",
-      "region": "us-east-1"
+      "apiVersion": "latest"
+    },
+    "rekognition": {
+      "bannedLabels": [
+        "Explicit Nudity",
+        "Suggestive",
+        "Violence",
+        "Visually Disturbing",
+        "Rude Gestures",
+        "Drugs",
+        "Hate Symbols"
+      ]
     }
   }
 }
