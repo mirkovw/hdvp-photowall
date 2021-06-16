@@ -80,7 +80,7 @@ const smtp_server = new SMTPServer({
                             }
 
                             else {
-                                console.log('Image was flagged by image recognition API...');
+                                console.log(path.basename(imagePath) + " : Flagged by image recognition API...");
                                 response = 'The image you sent through was deemed inappropriate by our software. Please select another image and try again.';
                             }
 
@@ -174,20 +174,18 @@ const checkImageRekognition = async (imagePath) => {
         "bucket": "not_applicable"
     })
 
-
-
     console.log(path.basename(imagePath) + ' : Sending to Rekognition API...')
     const image = await fs.readFile(imagePath);
     const imageJpg = await sharp(image).jpeg().toBuffer();
-    console.log(imageJpg);
+    // console.log(imageJpg);
     const result = await rekognition.detectModerationLabels(imageJpg, 20);
     const bannedLabels = config.get('aws.rekognition.bannedLabels');
 
     let bannedAmount = 0;
     result.ModerationLabels.forEach( entry => {
         if (bannedLabels.includes(entry.ParentName)) {
-            console.log('Found an entry we dont like');
-            console.log(entry);
+            console.log(path.basename(imagePath) + ' : Found : ' + entry.ParentName)
+            // console.log(entry);
             bannedAmount += 1;
         }
     });
