@@ -58,11 +58,11 @@ const smtp_server = new SMTPServer({
                 console.log('From: ' + parsed.from.text);
                 console.log('Subject: ' + parsed.subject);
 
-                console.log('more info:');
-                console.log(parsed.from);
-
-                console.log('reply to?')
-                console.log(parsed.replyTo);
+                // console.log('more info:');
+                // console.log(parsed.from);
+                //
+                // console.log('reply to?')
+                // console.log(parsed.replyTo);
 
                 console.log('----------------------------')
 
@@ -232,11 +232,21 @@ const updateDataJson = async () => {
 
 const replyTo = async (parsed, response) => {
     const email = parsed.from.value[0].address;
+    let toAddress = parsed.from.text;
 
     if (email === 'photos@hdvp.nl' || email === 'foto@hdvp.nl') {
-        console.log('message was sent from photos/foto@hdvp.nl which will cause a loop. Aborting..');
-        return;
+        if (!parsed.replyTo) {
+            console.log('message was sent from photos/foto@hdvp.nl which will cause a loop. Aborting..');
+            return;
+        }
+
+        if (parsed.replyTo) {
+            toAddress = parsed.replyTo.text;
+            console.log('Sending reply to replyTo: '+ toAddress);
+        }
     }
+
+
 
     // console.log('this email was:')
     // console.log('from: ');
@@ -267,7 +277,7 @@ const replyTo = async (parsed, response) => {
 
     const mailOptions = {
         from: config.get('mail.from'),
-        to: parsed.from.text,
+        to: toAddress,
         subject: 'RE: ' + parsed.subject,
         text: response,
         html: response,
@@ -285,7 +295,7 @@ const replyTo = async (parsed, response) => {
 }
 
 ( async () => {
-    console.log('Starting app: Photowall v1.0.2');
+    console.log('Starting app: Photowall v1.0.3');
     web_server.use(express.static(publicFolder));
     await updateDataJson();
 
