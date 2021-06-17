@@ -18,3 +18,5 @@ src/send_hdvp.js
 src/sendMail.js
 
 src/sendmail_myrcat.js
+
+src/rekognition.js
