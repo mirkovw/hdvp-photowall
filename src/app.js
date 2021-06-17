@@ -57,6 +57,13 @@ const smtp_server = new SMTPServer({
                 console.log('To: ' + parsed.to.text);
                 console.log('From: ' + parsed.from.text);
                 console.log('Subject: ' + parsed.subject);
+
+                console.log('more info:');
+                console.log(parsed.from);
+
+                console.log('reply to?')
+                console.log(parsed.replyTo);
+
                 console.log('----------------------------')
 
                 if (parsed['attachments'].length > 0) { //check for attachments
@@ -223,7 +230,6 @@ const updateDataJson = async () => {
     await fs.writeFile(jsonDataPath, JSON.stringify(jsonData, null, 2));
 }
 
-
 const replyTo = async (parsed, response) => {
     const email = parsed.from.value[0].address;
 
@@ -278,9 +284,8 @@ const replyTo = async (parsed, response) => {
     });
 }
 
-
 ( async () => {
-    console.log('Starting app: Photowall v1.0.1');
+    console.log('Starting app: Photowall v1.0.2');
     web_server.use(express.static(publicFolder));
     await updateDataJson();
 
@@ -295,7 +300,4 @@ const replyTo = async (parsed, response) => {
         console.log('File', path, 'has been removed');
         await updateDataJson();
     })
-
-
-
 })();
