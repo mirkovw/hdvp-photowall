@@ -119,7 +119,7 @@ const getNewFilename = async () => {
     // console.log('Getting new filename')
     const d = new Date();
     const timeStamp = d.getTime();
-    const newFilename = 'img_' + timeStamp +  '_id1_id2.webp';
+    const newFilename = 'img_' + timeStamp +  '_id1_id2.jpg';
     const newImagePath = path.join(tempImgFolder, newFilename)
 
     // console.log('Ok new filename is ' + path.basename(newImagePath));
@@ -280,7 +280,7 @@ const replyTo = async (parsed, response) => {
 
 
 ( async () => {
-    console.log('Starting app: Photowall v1.0');
+    console.log('Starting app: Photowall v1.0.1');
     web_server.use(express.static(publicFolder));
     await updateDataJson();
 
