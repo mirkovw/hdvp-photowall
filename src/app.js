@@ -125,13 +125,14 @@ const getNewFilename = async () => {
     // console.log('Ok new filename is ' + path.basename(newImagePath));
     // console.log('And the path is ' + newImagePath)
     return newImagePath;
+
 }
 
 const writeAttachment = async (attachment) => {
     // console.log('Ok got an attachment: ' + attachment)
     const imgFilePath = await getNewFilename();
     // console.log('Writing to temp folder...')
-    const image = await sharp(attachment.content).resize(800).toFile(imgFilePath);
+    const image = await sharp(attachment.content).resize(800).withMetadata().toFile(imgFilePath);
     // console.log('Done. image details:');
     // console.log(image);
     console.log(path.basename(imgFilePath) + ' : Created')
@@ -178,14 +179,14 @@ const checkImageRekognition = async (imagePath) => {
     const image = await fs.readFile(imagePath);
     const imageJpg = await sharp(image).jpeg().toBuffer();
     // console.log(imageJpg);
-    const result = await rekognition.detectModerationLabels(imageJpg, 20);
+    const result = await rekognition.detectModerationLabels(imageJpg, 40);
     const bannedLabels = config.get('aws.rekognition.bannedLabels');
 
     let bannedAmount = 0;
     result.ModerationLabels.forEach( entry => {
         if (bannedLabels.includes(entry.ParentName)) {
             console.log(path.basename(imagePath) + ' : Found : ' + entry.ParentName)
-            // console.log(entry);
+            console.log(entry);
             bannedAmount += 1;
         }
     });
