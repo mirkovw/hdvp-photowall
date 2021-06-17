@@ -179,7 +179,7 @@ const checkImageRekognition = async (imagePath) => {
     const image = await fs.readFile(imagePath);
     const imageJpg = await sharp(image).jpeg().toBuffer();
     // console.log(imageJpg);
-    const result = await rekognition.detectModerationLabels(imageJpg, 40);
+    const result = await rekognition.detectModerationLabels(imageJpg, 50);
     const bannedLabels = config.get('aws.rekognition.bannedLabels');
 
     let bannedAmount = 0;
@@ -280,6 +280,7 @@ const replyTo = async (parsed, response) => {
 
 
 ( async () => {
+    console.log('Starting app: Photowall v1.0');
     web_server.use(express.static(publicFolder));
     await updateDataJson();
 
@@ -294,5 +295,7 @@ const replyTo = async (parsed, response) => {
         console.log('File', path, 'has been removed');
         await updateDataJson();
     })
+
+
 
 })();
