@@ -83,7 +83,7 @@ const smtp_server = new SMTPServer({
                                 await updateDataJson();
 
                                 console.log(path.basename(imagePath) + " : Resized, checked, moved and added to JSON");
-                                response = 'Your image has been added to the photowall and will be visible shortly. Thank you!<br>The images will be deleted after the event concludes.';
+                                response = 'Your image has been added to the photowall and will be visible shortly. Thank you!';
                             }
 
                             else {
